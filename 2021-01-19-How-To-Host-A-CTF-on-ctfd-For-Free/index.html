@@ -1,0 +1,88 @@
+<!DOCTYPE html><html class="appearance-dark" lang="en"><head><meta charset="UTF-8"><title>How To Host A CTF on ctfd For Free</title><meta name="description" content="Infosec Blog"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="Hello Friends, In todays blog I will tell how to host CTF for free on the ctfd with the Digital Ocean.
+
+Digital Ocean provide free 100$ Credit to every new user for one time. 
+
+Digital Ocean
+We will use these credits for hosting our CTF.
+
+NOTE : You will only get credits if you have credit card or paypal account. 
+
+But there is also one way by which you ca.."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">vulnfreak's blog</a></h2></section><h3 class="is-hidden-mobile is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">How To Host A CTF on ctfd For Free</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">Click back to the top</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">Home</a></h3><h3 class="is-inline-block"><a href="/about">About</a></h3><h3 class="is-inline-block"><a href="/archives">Archives</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">Home</a></h3><h3 class="is-inline-block"><a href="/about">About</a></h3><h3 class="is-inline-block"><a href="/archives">Archives</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Extra-Points"><span class="toc-text">Extra Points</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/ctf"><i class="tag post-item-tag">ctf</i></a><a href="/tags/server%20host"><i class="tag post-item-tag">server host</i></a></header><h1 class="mt-0 mb-1" id="postTitle">How To Host A CTF on ctfd For Free</h1><time class="has-text-grey" datetime="2021-01-19T17:40:00.000Z">2021-01-19</time><article class="mt-2 post-content"><p>Hello Friends, In todays blog I will tell how to host CTF for free on the <strong>ctfd</strong> with the <strong>Digital Ocean</strong>.</p>
+<blockquote>
+<p>Digital Ocean provide free <strong>100$ Credit</strong> to every new user for one time. </p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.digitalocean.com/">Digital Ocean</a></p>
+<p>We will use these credits for hosting our CTF.</p>
+<blockquote>
+<p>NOTE : You will only get credits if you have credit card or paypal account. </p>
+</blockquote>
+<p>But there is also one way by which you can take credits is that if you have debit card and have international ON on it then it will also work.</p>
+<p>So after creating account you just have to go to home page and click on the Get started with a droplet.</p>
+<p><img src="/assets/CTF_HOST/1.png" alt="info"></p>
+<p>After this you will get options to choose the OS you want the configuration you want and password you can set for the ssh login.</p>
+<p>So from my experience ubuntu is good with 18.04* with configuration of </p>
+<ul>
+<li>4 CPUs </li>
+<li>5 TB Transfer</li>
+<li>160 GB SSD </li>
+</ul>
+<p><img src="/assets/CTF_HOST/2.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/3.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/4.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/5.png" alt="info"></p>
+<p>Then click on the CREATE DROPLET option.</p>
+<p><img src="/assets/CTF_HOST/6.png" alt="info"></p>
+<p>when the droplet is build you will get your IP.</p>
+<p><img src="/assets/CTF_HOST/8.png" alt="info"></p>
+<p>Now login into machine you hosted with the SSH ( creds are the username : root and password : &lt; you choosed while creating &gt; )</p>
+<p>Firstly update and upgrade</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt update &amp;&amp; apt upgrade</span><br></pre></td></tr></table></figure>
+
+<p>It will take sometime to update the system after this we have to install the <strong>docker</strong> and <strong>docker-compose</strong>.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt install docker docker-compose</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/CTF_HOST/11.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/10.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/12.png" alt="info"></p>
+<p>After this just visit CTFD deployment website there also you get all the steps how to do.</p>
+<p><a target="_blank" rel="noopener" href="https://docs.ctfd.io/docs/deployment/">CTFD DEPLOYMENT</a></p>
+<p><img src="/assets/CTF_HOST/13.png" alt="info"></p>
+<p>Now just open the tmux session by typing <strong>tmux and press enter</strong>.</p>
+<p>So we will git clone the ctfd repo first and then do the further steps.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/CTFd/CTFd.git</span><br></pre></td></tr></table></figure>
+
+<p><img src="/assets/CTF_HOST/14.png" alt="info"></p>
+<p>Now move to the CTFD dir and open the <strong>docker-compose.yml</strong> file. In this we have to update the secret key and workers ( so that it can handel the load ).</p>
+<p>Before : </p>
+<p><img src="/assets/CTF_HOST/15.png" alt="info"></p>
+<p>After : </p>
+<p><img src="/assets/CTF_HOST/17.png" alt="info"></p>
+<p>So now just save and exit the docker-compose.yml file. And type <strong>docker-compose up</strong>.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up</span><br></pre></td></tr></table></figure>
+
+<p>It will start your CTFD. It may take few minutes to complete the process so till then sit back and enjoy 😉.</p>
+<p><img src="/assets/CTF_HOST/18.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/19.png" alt="info"></p>
+<p>Now our CTFD is hosted at our IP know we have to point it to our subdomain. So I use cloudflare for the proxy server.</p>
+<p>visit <a target="_blank" rel="noopener" href="https://www.cloudflare.com/">cloudflare</a> website and there just click on the add site and choose free paln and after this your domain DNS recods wil be updated in the Cloudflare. </p>
+<p><img src="/assets/CTF_HOST/20.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/21.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/22.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/23.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/24.png" alt="info"></p>
+<p>Now we just have to add our subdomain in the cloudflare and save it. Now our subdomain point to the IP address of our CTFD server.</p>
+<p><img src="/assets/CTF_HOST/25.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/26.png" alt="info"></p>
+<p>After this just setup your admin account and Enjoy the CTF.</p>
+<blockquote>
+<p>This is how you can host any ctf on the ctfd for free.</p>
+</blockquote>
+<h4 id="Extra-Points"><a href="#Extra-Points" class="headerlink" title="Extra Points"></a>Extra Points</h4><p>Sometimes it points the website but is not on SSL ( showing not secure ) for this solution just go to the cloudflare and visit ssl-tls and make the encryption mode flexible.</p>
+<p>After this go to the edge-certificates.</p>
+<p><code>Home -&gt; ssl-tls -&gt; edge-certificates</code></p>
+<p>There you will find a option Always use HTTPS just on this option and after this your website will be on HTTPS.  </p>
+<p><img src="/assets/CTF_HOST/28.png" alt="info"></p>
+<p><img src="/assets/CTF_HOST/27.png" alt="info"></p>
+<p>HAPPY HACKING 👱‍.</p>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/2021-01-22-EthicalHacking1/" title="Getting Started With Cyber Security &amp; Ethical Hacking"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">Previous: Getting Started With Cyber Security &amp; Ethical Hacking</span></a><a class="button is-default" href="/2021-01-11-so-you-want-to-learn-hacking/" title="SO YOU WANT TO LEARN HACKING?"><span class="has-text-weight-semibold">Next: SO YOU WANT TO LEARN HACKING?</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/vulnfreak"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/vulnfreak"><i class="iconfont icon-github"></i></a><!-- Ins--><a title="instagram" target="_blank" rel="noopener nofollow" href="//www.instagram.com/vulnfreak"><i class="iconfont icon-ins"></i></a><!-- RSS--><!-- 知乎--><!-- 领英--><a title="linkedin" target="_blank" rel="noopener nofollow" href="//www.linkedin.com/in/company/71482834/"><i class="iconfont icon-linkedin"></i></a><!-- 脸书--></section><p><span>Copyright ©</span><span> vulnfreak 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>

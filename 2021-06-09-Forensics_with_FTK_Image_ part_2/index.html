@@ -1,0 +1,212 @@
+<!DOCTYPE html><html class="appearance-dark" lang="en"><head><meta charset="UTF-8"><title>Forensics with FTK Imager Part 2</title><meta name="description" content="Infosec Blog"><meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, initial-scale=1"><!-- Google Analytics --><!-- End Google Analytics -->
+<!-- Baidu Analytics --><!-- End Baidu Analytics --><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="/style/common/bulma.css"><link rel="stylesheet" href="/style/base.css"><link rel="stylesheet" href="/style/common/helper.css"><script src="/js/common.js"></script><link rel="stylesheet" href="/style/post.css"><link rel="stylesheet" href="/style/themes/highlight-theme-light.css"><script src="/js/highlight.pack.js"></script><meta name="description" content="
+
+
+In my last blog I discussed the interface of FTK Imager tool and talked about various files of NTFS, a widely used tool in terms of Cyber Forensics, and also why Ilike this tool is because it has so many features and yet it is a free tool. If you don’t have FTK Imager tool then you can download itfrom this link. 
+In this blog I am going to show how the .."><meta name="generator" content="Hexo 5.4.0"></head><body class="is-flex is-flex-direction-column"><header class="header-widget is-flex-shrink-0 is-hidden-mobile"><div class="container is-fullhd is-flex is-justify-content-space-between is-align-items-center is-full-height"><section class="is-hidden-mobile is-flex-shrink-0"><h2><a href="/">vulnfreak's blog</a></h2></section><h3 class="is-hidden-mobile is-full-height is-flex is-align-items-center is-flex-shrink-0"><div class="is-full-height" id="postTopic"><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">Forensics with FTK Imager Part 2</p><p class="is-full-height is-flex-shrink-0 is-flex is-align-items-center is-justify-content-center">Click back to the top</p></div></h3><aside class="is-flex-shrink-0"><h3 class="is-inline-block"><a href="/">Home</a></h3><h3 class="is-inline-block"><a href="/about">About</a></h3><h3 class="is-inline-block"><a href="/archives">Archives</a></h3></aside></div></header><header class="is-flex header-widget is-flex-shrink-0 is-align-items-center is-justify-content-center is-hidden-tablet"><h3 class="is-inline-block"><a href="/">Home</a></h3><h3 class="is-inline-block"><a href="/about">About</a></h3><h3 class="is-inline-block"><a href="/archives">Archives</a></h3></header><main><main class="container is-max-widescreen content section post-page pt-4 px-4"><div class="columns is-flex-desktop is-justify-content-center is-flex-direction-row-reverse"><div class="column is-3 is-hidden-mobile"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#1-Various-offset-in-MFT-file"><span class="toc-text">1.Various offset in $MFT file</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-Let%E2%80%99s-see-the-record-of-another-file-in-the-volume"><span class="toc-text">2.Let’s see the record of another file in the volume</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Record-begins"><span class="toc-text">Record begins</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#New-attribute-started"><span class="toc-text">New attribute started</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#New-attribute-started-1"><span class="toc-text">New attribute started</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#New-attribute-started-2"><span class="toc-text">New attribute started</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Let%E2%80%99s-discuss-the-Sno-14-of-above-table"><span class="toc-text">Let’s discuss the Sno. 14 of above table</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#By-using-the-calculations-how-to-find-the-file-in-the-cluster"><span class="toc-text">By using the calculations how to find the file in the cluster?</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-Retrieving-permanently-deleted-file-from-FTK-Imager"><span class="toc-text">3.Retrieving permanently deleted file from FTK Imager</span></a></li></ol></div><div class="column is-9"><header class="my-4"><a href="/tags/CHFI"><i class="tag post-item-tag">CHFI</i></a><a href="/tags/CyberForensics"><i class="tag post-item-tag">CyberForensics</i></a><a href="/tags/Cyber"><i class="tag post-item-tag">Cyber</i></a><a href="/tags/Forensics"><i class="tag post-item-tag">Forensics</i></a><a href="/tags/StrorageDevice"><i class="tag post-item-tag">StrorageDevice</i></a><a href="/tags/FTK"><i class="tag post-item-tag">FTK</i></a><a href="/tags/PSTools"><i class="tag post-item-tag">PSTools</i></a><a href="/tags/hex"><i class="tag post-item-tag">hex</i></a></header><h1 class="mt-0 mb-1" id="postTitle">Forensics with FTK Imager Part 2</h1><time class="has-text-grey" datetime="2021-06-09T01:40:00.000Z">2021-06-09</time><article class="mt-2 post-content"><img src="/assets/CyberForensics/ftk2banner.jpg" alt="image1" height="400" width="900"/>
+
+<hr>
+<p>In my last blog I discussed the interface of FTK Imager tool and talked about various files of NTFS, a widely used tool in terms of Cyber Forensics, and also why I<br>like this tool is because it has so many features and yet it is a free tool. If you don’t have FTK Imager tool then you can download it<br>from this <a target="_blank" rel="noopener" href="https://marketing.accessdata.com/l/46432/2020-09-24/8l45td">link</a>. <br><br></p>
+<p>In this blog I am going to show how the files are indexed in <strong>MFT</strong> file. The various important offset numbers in <strong>$MFT</strong> file. Also I will show how we can combine the fragments of the file(any file mp4,mp3,.exe,.apk,.txp,.ppt etc…) and combine them to form the source file again.<br></p>
+<h1 id="1-Various-offset-in-MFT-file"><a href="#1-Various-offset-in-MFT-file" class="headerlink" title="1.Various offset in $MFT file"></a>1.<u>Various offset in $MFT file</u></h1><br>
+
+<p><strong>What is offset?</strong><br>Offset is just a position of the hexadecimal values in FTK Imager. Let’s see an example:</p>
+<p><img src="/assets/CyberForensics/ftk2_1.PNG" alt="hack"></p>
+<p>The ablove snapshot is the snapshot of 1st sector of the MFT file, which is of 512 bytes. The size of the sector is always 512 bytes. The size of the cluster changes, according to what you have chosen at the time of formatting the disk(min size of a cluster is 4096 bytes, also known as allocation unit size). That we have discussed in last blog. Above snap is the <strong>$MFT</strong> file’s 1st sector, and it will be same in everyone’s disk which is having NTFS file system.</p>
+<p><strong>IMPORTANT:</strong> The $MFT file is the index file, which stores the information regarding all the files and folders in the respective volume whose $MFT file it is. And the indexing is done in the form of records. Every file of that volume is having a record in $MFT file and these records are of 1024 bytes which are sequentially stored in the sectors of the volume. Remember that this $MFT is a file, stored sequentially and not broken into fragments unlike other files. Occupies all the clusters and doesn’t leave any RAM slack. 1024 bytes (2 sectors) are used to store the records as a security for if the size of file present in record increases in future then the record could be extended. <br><br><br><strong>Now your question would be if the file is of 2GB then how its record would fit in 1024 bytes?</strong><br><br>The answer is simple, the record of the files are stored in hexadecimal form, which sotres the address of the cluster where that particular file is stored. So if in case that 2GB file is fragmented into 4 parts, and those 4 fragments are stored in different clusters, then the record will store the address of those 4 clusters in hexadecimal format. All this I will show practically in this blog.<br><br><br><br></p>
+<p><img src="/assets/CyberForensics/ftk2_1.PNG" alt="hack"><br><img src="/assets/CyberForensics/ftk2_2.PNG" alt="hack"><br><br></p>
+<p>The above two snapshots show the 1024 bytes(means 2 sectors) record of the $MFT file. In $MFT file the first record is always of $MFT file. The second sector is empty bcz the there are not many files in my logical volume to have more data in the records of $MFT. But yes the record will increase to another sector if I add more files in the volume that it is unable to map within 512 bytes.<br><br><br><br></p>
+<h1 id="2-Let’s-see-the-record-of-another-file-in-the-volume"><a href="#2-Let’s-see-the-record-of-another-file-in-the-volume" class="headerlink" title="2.Let’s see the record of another file in the volume"></a>2.<u>Let’s see the record of another file in the volume</u></h1><p><img src="/assets/CyberForensics/ftk2_3.PNG" alt="hack"><br><img src="/assets/CyberForensics/ftk2_4.PNG" alt="hack"><br><br></p>
+<p>The above two snapshots are showing the record of one of the tools of from Microsoft <strong>pslist.exe</strong>. If I search for this name in FTK imager like shown below:<br><img src="/assets/CyberForensics/ftk2_5.PNG" alt="hack"><br><br></p>
+<p>Then there might be more than one entries, depending if this file is present in any folder or not. If the file is in folder, then definitely when you search, you will find one of the entries in the folder, because the folder is also indexed in $MFT file. So, the same name could be present in that record. But we are finding the record for this file, so make sure that at the beginning of the record of this file, there is <strong>File0</strong> in the beginning. As you can see in the snapshot below:<br><img src="/assets/CyberForensics/ftk2_6.PNG" alt="hack"><br><br><br><br></p>
+<p>Now let’s see the various offsets(the position), their hexadecimal values(what hexadecimal value is present at that position) and what does it means with respect to record:</p>
+<p><strong>IMPORTANT:</strong> Offset number always starts with 0 in a record and therefore goes till 511 in a sector. Also the Hexadecimal values might be changed in you device, so take the reference from the example I am using only for this blog and use it accordingly in your device. Also one more thing that the word <strong>Attribute</strong> will be used much in below table, which means that the information regarding the file is stored in various sections of record. Each section shows different information regarding the file. And these sections is known as <strong>Attributes</strong>.<br></p>
+<h2 id="Record-begins"><a href="#Record-begins" class="headerlink" title="Record begins"></a>Record begins</h2><table>
+<thead>
+<tr>
+<th>Sno.</th>
+<th>Offset</th>
+<th>Hexadecimal Value (0x)</th>
+<th>Interpretation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>4-5</td>
+<td>30 00</td>
+<td><img src="/assets/CyberForensics/ftk2_7.PNG" alt="hack"></td>
+<td>This means that at offset 48 (value of signed integer) the details regarding the error handling is stored</td>
+</tr>
+<tr>
+<td>2</td>
+<td>20</td>
+<td>38</td>
+<td><img src="/assets/CyberForensics/ftk2_8.PNG" alt="hack"></td>
+<td>This means that the length of the first attribute is 55 offsets. From 56th offset there is the beginning of the another attribute.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>48-49</td>
+<td>0D 00</td>
+<td>This offset is the same that we discussed in Sno. 1</td>
+<td>These hexadecimal values are used as checksums, means the same two hexadecimal values would be present at the end of the sector to check if there is no error in the sector.</td>
+</tr>
+</tbody></table>
+<h2 id="New-attribute-started"><a href="#New-attribute-started" class="headerlink" title="New attribute started"></a>New attribute started</h2><table>
+<thead>
+<tr>
+<th>Sno.</th>
+<th>Offset</th>
+<th>Hexadecimal Value (0x)</th>
+<th>Interpretation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4</td>
+<td>56 from beginning of record</td>
+<td>10 00 00 00</td>
+<td>From 56th offset you find six following 0s.</td>
+<td>This is the new attribute that started.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>4 in this attribute</td>
+<td>60</td>
+<td><img src="/assets/CyberForensics/ftk2_9.PNG" alt="hack"></td>
+<td>This displays the length of this attribute from the 56th offset, i.e. the new attribute will  start from 96th offset(value of unsigned integer) from the beginning of this attribute.</td>
+</tr>
+<tr>
+<td>6</td>
+<td>20 in this attribute</td>
+<td>18</td>
+<td><img src="/assets/CyberForensics/ftk2_10.PNG" alt="hack"></td>
+<td>This displays that the unsigned integer value 24, means the data of this attribute begins from 24th offset from the start of this attribute.</td>
+</tr>
+<tr>
+<td>7</td>
+<td>24 in this attribute</td>
+<td>00 3D 68 EF 3F 5C D7 01 -  00 5C 6D C8 64 D1 D1 01 - 70 2F 1C FB 46 5C D7 01 - 17 0D 04 0F 47 5C D7 01</td>
+<td>These are 4 different timestamps of the file</td>
+<td>1st group timestamps the creation of file in the file system, 2nd group timestamps the last modification of the file in file system, 3rd group timestamps the last access of the file, 4th group timestamps the record update date and time</td>
+</tr>
+</tbody></table>
+<h2 id="New-attribute-started-1"><a href="#New-attribute-started-1" class="headerlink" title="New attribute started"></a>New attribute started</h2><table>
+<thead>
+<tr>
+<th>Sno.</th>
+<th>Offset</th>
+<th>Hexadecimal Value (0x)</th>
+<th>Interpretation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>8</td>
+<td>96 from beginning of last attribute</td>
+<td>30 00 00 00</td>
+<td>From 96th offset you find six following 0s.</td>
+<td>This is the new attribute that started, having filename and other metadata.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>4 in this attribute</td>
+<td>70</td>
+<td><img src="/assets/CyberForensics/ftk2_11.PNG" alt="hack"></td>
+<td>This displays the length of this attribute from the 96th offset, i.e. the new attribute will  start from 112th offset(value of unsigned integer) from the beginning of the attribute.</td>
+</tr>
+<tr>
+<td>10</td>
+<td>20 in this attribute</td>
+<td>18</td>
+<td><img src="/assets/CyberForensics/ftk2_10.PNG" alt="hack"></td>
+<td>This displays that the unsigned integer value 24, means the data of this attribute begins from 24th offset from the start of this attribute. This attribute has the filename.</td>
+</tr>
+</tbody></table>
+<h2 id="New-attribute-started-2"><a href="#New-attribute-started-2" class="headerlink" title="New attribute started"></a>New attribute started</h2><table>
+<thead>
+<tr>
+<th>Sno.</th>
+<th>Offset</th>
+<th>Hexadecimal Value (0x)</th>
+<th>Interpretation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>11</td>
+<td>112 from the beginning of last attribute</td>
+<td>80 00 00 00</td>
+<td>From 112th offset you find six following 0s.</td>
+<td>This is the new attribute that started having information about the file fragments.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>4 in this attribute</td>
+<td>48</td>
+<td><img src="/assets/CyberForensics/ftk2_11.PNG" alt="hack"></td>
+<td>his displays that the unsigned integer value 72, means the data of this attribute begins from 72nd offset from the start of this attribute. This attribute has the filename.</td>
+</tr>
+<tr>
+<td>13</td>
+<td>8 in this attribute</td>
+<td>01</td>
+<td>Displays if the file is resident or not</td>
+<td>Resident file is the file whose data is completely stored in MFT record, these files are smaller in size. If the file is resident then the offset 8th in this attribute has flag 00. Non-resident files are files whose data can’t be fit in MFT record, these files are bigger in size. If the file is non-resident then the offset 8th in this attribute has flag 01.</td>
+</tr>
+<tr>
+<td>14</td>
+<td>64 in this attribute</td>
+<td>41</td>
+<td>Hexadecimal value to retrievr the cluster number and fragment size of file.</td>
+<td>This hexadecimal value displays that the 4+1=&gt;5 hexadecimal values following this(41) hexadecimal value stores information related to the cluster where this file is present and the total offsets from that cluster where the file chunks are present. The 1st hexadecimal value after this i.e. 2C marks the total length of data related to file in the cluster and 4 hexadecimal values following 2C i.e. AB CA EC 04 is the starting address of the cluster from the beginning of the volume.</td>
+</tr>
+</tbody></table>
+<br>
+
+<p><img src="/assets/CyberForensics/MFT.png" alt="hack"><br><img src="/assets/CyberForensics/legends.png" alt="hack"></p>
+<br>
+<br>
+
+<h2 id="Let’s-discuss-the-Sno-14-of-above-table"><a href="#Let’s-discuss-the-Sno-14-of-above-table" class="headerlink" title="Let’s discuss the Sno. 14 of above table"></a>Let’s discuss the Sno. 14 of above table</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">64th offset of attribute 0x80 00 00 00 is 0x41 2C AB CA EC 04 00 00</span><br><span class="line">41&#x3D;&gt; 4+1&#x3D;&gt;5 --&gt; 5 offsets following 0x41 as the information related to cluster where</span><br><span class="line">this file is present and the total offsets from that cluster where the file chunks are</span><br><span class="line">present.</span><br><span class="line"></span><br><span class="line">Which is 0x2C AB CA EC 04</span><br><span class="line"></span><br><span class="line">Out of 0x2C AB CA EC 04</span><br><span class="line">0x2C (the 1st part having group of 1 hexadecimal value)</span><br><span class="line">AND</span><br><span class="line">0xAB CA EC 04(2nd part having group of 4 hexadecimal values)</span><br><span class="line"></span><br><span class="line">Remember it with this technique that if it is 0x41</span><br><span class="line">then the 1st part will have only 1 hexadcimal value and 2nd part will have 4 hexadecimal values</span><br><span class="line"></span><br><span class="line">OR if it is 0x23</span><br><span class="line">then the 1st part will have only 3 hexadcimal value and 2nd part will have 3 hexadecimal values</span><br><span class="line"></span><br><span class="line">OR if it is 0x34</span><br><span class="line">then the 1st part will have only 4 hexadcimal value and 2nd part will have 3 hexadecimal values</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<br>
+
+<p>In our case we have 0x41 then 1st part will have only 1 hexadcimal value(0x2C) and 2nd part will have 4 hexadecimal values(0xAB CA EC 04). From 1st part on interpretation we get 44 in unsigned integer.<br></p>
+<p>From 2nd part on interpretation we get 82627243 signed integer. We use signed integer for 2nd part because sometimes the file is fragmented, and the relative cluster position is given by the 2nd part. So if it is in negative then it means that the fragment of the file is present in those number of clusters before the current cluster position you are on.  If it is in positive then it means that the fragment of the file is present in those number of clusters after the current cluster position you are on.<br></p>
+<p>But this file is not fragmented, as it is not that large. So we have the position of only one cluster. If there were fragments, then you will again do the same step with the hexadecimal value, break the following hexadecimal values in 2 parts and so on.<br><br>The value of first part is 44, but this is not the actual length, we have to convert this 44 in bytes. My cluster is of 4096 bytes. So I will multiply 4096 with 44, 4096x44=180224 bytes.<br></p>
+<p>From the 2nd part you infer that the starting cluster of the file is 82627243 from the beginning of the volume cluster and from 1st part you infer that 180224 bytes from that cluster position are of this file(pslist.exe).<br></p>
+<h1 id="By-using-the-calculations-how-to-find-the-file-in-the-cluster"><a href="#By-using-the-calculations-how-to-find-the-file-in-the-cluster" class="headerlink" title="By using the calculations how to find the file in the cluster?"></a>By using the calculations how to find the file in the cluster?</h1><p>Click on <strong>NONAME[NTFS]</strong> you will be able to see the 0th cluster and 0th sector.<br><img src="/assets/CyberForensics/ftk2_cluster0.PNG" alt="hack"></p>
+<br>
+
+<p>Click on 0th offset and press <strong>Ctrl+S</strong> to open <strong>Go to sector/cluster</strong> dialogue box. In the input box of cluster type 82627243 and press ok Then type 180224 as shown in below snapshot. Then your cursor will be positioned at the beginning of the cluster.<br><img src="/assets/CyberForensics/ftk2_cluster.PNG" alt="hack"></p>
+<br>
+<br>
+
+<p>There press right click and select the option <strong>Set selection length</strong>. Then type 180224 as shown in below snapshot and press ok.<br><img src="/assets/CyberForensics/ftk2_selectionsize.PNG" alt="hack"></p>
+<br>
+<br>
+
+<p>Right Click on the selected part and select the option <strong>Save Selection</strong>. As shown in below snapshot:<br><img src="/assets/CyberForensics/ftk2_saveselection.PNG" alt="hack"></p>
+<br>
+
+<p>Fill the <strong>File Name</strong> with extension. In this case I will write the name <strong>pslist.exe</strong> in filename, choose the path where you want to store. Press enter. The same file will be saved there. Now I can run the file through command prompt. There will be no error, cz the file is same. If your file is fragmented then save the fragments in one directory and then run the command <strong>copy /b [fragments name separated by spaces] filename.extension</strong>. The fragments will be combined together and the same file will be ready to use again there.</p>
+<h1 id="3-Retrieving-permanently-deleted-file-from-FTK-Imager"><a href="#3-Retrieving-permanently-deleted-file-from-FTK-Imager" class="headerlink" title="3.Retrieving permanently deleted file from FTK Imager"></a>3.<u>Retrieving permanently deleted file from FTK Imager</u></h1><p>To retrieve the deleted file, do the following:</p>
+<ol>
+<li>Attach the logical volume/image of any drive as evidence item.</li>
+<li>From the <strong>Evidence Tree</strong>, open the directory from where the file got deleted.</li>
+<li>Check the <strong>File List</strong>, you would be able to see the file marked with “cross” in front of it.</li>
+<li>Right click on it and chose <strong>Export Files</strong> option.</li>
+<li>Select the path where you want to save.</li>
+<li>Click OK. The file is retrieved.</li>
+</ol>
+<br>
+<br>
+
+<p>In the snapshot below the file <strong>pslist.exe</strong> is deleted permanently from my logical volume. Click on it and export it to retrieve.<br><img src="/assets/CyberForensics/ftk2_deleted1.PNG" alt="hack"><br><img src="/assets/CyberForensics/ftk2_deleted2.PNG" alt="hack"></p>
+<br>
+<br>
+
+<p>The file can only be retrieved until you have not written anything in that volume, once you install anything in that volume the deleted file cannot be retrieved again from FTK Imager.</p>
+</article><section class="jump-container is-flex is-justify-content-space-between my-6"><!-- em is empty placeholder--><a class="button is-default" href="/2021-06-19-Blockchain/" title="Let's Start With Blockchain"><i class="iconfont icon-prev mr-2 has-text-grey"></i><span class="has-text-weight-semibold">Previous: Let's Start With Blockchain</span></a><a class="button is-default" href="/2021-06-08-Forensics_with_FTK_Imager/" title="Forensics with FTK Imager"><span class="has-text-weight-semibold">Next: Forensics with FTK Imager</span><i class="iconfont icon-next ml-2 has-text-grey"></i></a></section></div></div></main></main><footer class="is-flex is-flex-direction-column is-align-items-center is-flex-shrink-0"><section class="sns-container"><a title="twitter" target="_blank" rel="noopener nofollow" href="//twitter.com/vulnfreak"><i class="iconfont icon-twitter"></i></a><!-- Github--><a title="github" target="_blank" rel="noopener nofollow" href="//github.com/vulnfreak"><i class="iconfont icon-github"></i></a><!-- Ins--><a title="instagram" target="_blank" rel="noopener nofollow" href="//www.instagram.com/vulnfreak"><i class="iconfont icon-ins"></i></a><!-- RSS--><!-- 知乎--><!-- 领英--><a title="linkedin" target="_blank" rel="noopener nofollow" href="//www.linkedin.com/in/company/71482834/"><i class="iconfont icon-linkedin"></i></a><!-- 脸书--></section><p><span>Copyright ©</span><span> vulnfreak 2021</span></p><div class="is-flex is-justify-content-center is-flex-wrap-wrap"><p>Powered by Hexo &verbar;&nbsp;</p></div><div><span></span></div></footer><script async defer src="https://buttons.github.io/buttons.js"></script><script src="/js/post.js"></script></body></html>
